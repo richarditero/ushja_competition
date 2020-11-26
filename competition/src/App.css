@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital@0;1&family=IBM+Plex+Sans+Condensed:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,100;0,400;0,700;1,100;1,400;1,700&family=IBM+Plex+Serif:ital@0;1&display=swap');
+
+.App {
+  text-align: center;
+}
+.nopad.container-fluid {
+  padding: 0px;
+}
+.padrl15 {
+  padding-right: 15px !important;
+  padding-left: 15px !important;
+}
+.contact-footer {
+  margin-bottom: 20px;
+  text-align: center;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+.contact-footer h4 {
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 28px;
+  color: #12498a;
+}
+.contact-footer p {
+  margin: 0;
+  padding-top: 10px;
+  font-size: 24px;
+}
+.contact-footer a {
+  color: #b01e3f;
+  transition: 175ms ease-in-out;
+  font-size: 26px;
+}
+.spinnerStyle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+}
+
+.mtop-1 {
+  margin-top: 1rem;
+}
+.mleft-1 {
+  margin-left: 1rem;
+}
+.bold-text {
+  font-weight: 600;
+}
+
+.MuiStepLabel-label.MuiStepLabel-alternativeLabel {
+  margin-top: 10px !important;
+}
+
+.MuiStepLabel-label.MuiStepLabel-active {
+  color: #0073e4 !important;
+  font-weight: 500;
+  margin-top: 10px !important;
+}
+
+.MuiStepLabel-label.MuiStepLabel-completed {
+  color: #0073e4 !important;
+  font-weight: 500;
+  margin-top: 10px !important;
+}
+
+.MuiStepIcon-root.MuiStepIcon-completed {
+  color: #0073e4 !important;
+}
+
+.MuiStepIcon-root.MuiStepIcon-active {
+  color: #0073e4 !important;
+}
+
+.cancel-button {
+  text-transform: none !important;
+  /* border-radius: 10px !important; */
+  background: #e5e3e3 !important;
+  margin: 1%;
+}
+
+.confirm-button {
+  text-transform: none !important;
+  /* border-radius: 10px !important; */
+  background: #ec5269 !important;
+  color: #ffffff !important;
+  margin: 1%;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  /* background: #ffb0bc;
+   */
+  background: #c4d7e9;
+  border-radius: 10px;
+}
+
+.profile-container {
+  /* font_family: IBM Plex Sans !important; */
+  position: absolute;
+  width: 100%;
+  overflow: hidden !important;
+}
+.profile-container:hover {
+  overflow-y: auto !important;
+}
+
+.profile-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.profile-container::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.profile-container::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+.spinner-style {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}

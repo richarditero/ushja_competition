@@ -1,0 +1,17 @@
+export const userReducerConstant = {
+  LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+  SET_USERDETAILS: 'SET_USERDETAILS',
+  LOGOUT: 'LOGOUT',
+};
+
+export const snackBarReducerConstant = {
+  SNACKBAR_SUCCESS: 'SNACKBAR_SUCCESS',
+  SNACKBAR_FAILURE: 'SNACKBAR_FAILURE',
+  SNACKBAR_CLEAR: 'SNACKBAR_CLEAR',
+};
+
+export const loaderReducerConstant = {
+  TOGGLE_LOADER: 'TOGGLE_LOADER',
+  TOGGLE_LOADING: 'TOGGLE_LOADING',
+};
+

@@ -1,7 +1,7 @@
 const ApiRouter = {
   REGISTER: 'register',
-  LOGIN: 'login',
-  ADMIN_USER: 'adminUser',
+  LOGIN: 'openCompetition/login',
+  ADMIN_USER: 'openCompetition/adminUser',
 };
 
 export default ApiRouter;

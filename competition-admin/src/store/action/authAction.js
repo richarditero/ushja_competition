@@ -5,14 +5,14 @@ import { toggleLoading } from './loaderAction';
 import ApiRouter from '../../constants';
 
 export const getUserDeatils = (uri) => (dispatch) => {
-  ApiUtil.getWithToken(uri)
+/*   ApiUtil.getWithToken(uri)
     .then((res) => {
       dispatch({
         type: userReducerConstant.SET_USERDETAILS,
         payload: res.data,
       });
     })
-    .catch(() => {});
+    .catch(() => {}); */
 };
 export const loginUser = (url, data) => (dispatch) => {
   dispatch(toggleLoading(true));

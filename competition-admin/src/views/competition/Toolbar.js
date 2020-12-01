@@ -52,10 +52,10 @@ const Toolbar = ({
           <CardContent>
             <Box
               display='flex'
-              justifyContent='space-between'
+              justifyContent='flex-end'
               alignItems='center'
             >
-              <Box
+              {/* <Box
                 maxWidth={500}
                 display='flex'
                 flexDirection='row'
@@ -87,7 +87,7 @@ const Toolbar = ({
                 >
                   Search
                 </Button>
-              </Box>
+              </Box> */}
               <Download handlePageLoder={handlePageLoder} />
             </Box>
           </CardContent>

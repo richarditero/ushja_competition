@@ -9,9 +9,7 @@ import {
 } from '@material-ui/core';
 import Footer from "../layout/footer";
 
-const publishableKey =
-  'pk_test_51Ha3YMKFC4sBdrdLZZoOL3KRCuZxXRckVRRxvtqN6ny8yK7qQd7FnQDnkFbC8NhCTw0WoFRAUqvXnFOqTBiZVUNH00mAYJ53LO';
-const stripePromise = loadStripe(publishableKey);
+const stripePromise = loadStripe(process.env.REACT_APP_PUBLISHABLE_KEY);
 
 function Checkout({location, componetProps}) {
   const PaymentSummary = componetProps; // payment summary component

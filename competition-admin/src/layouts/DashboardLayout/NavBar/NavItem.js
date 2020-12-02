@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     '& $icon': {
       color: theme.palette.primary.main,
     },
+    backgroundColor:"lavender"
   },
 }));
 

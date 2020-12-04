@@ -107,7 +107,7 @@ function CompetitionForm(props) {
                       variant="body1"
                       className={classes.gridDataText}
                     >
-                      Please fill the details and choose the competition form
+                      Please fill in your details below and choose the correct competition form.
                     </Typography>
                   </Grid>
                   <Grid
@@ -133,7 +133,7 @@ function CompetitionForm(props) {
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
-                        label="e-mail"
+                        label="E-mail"
                         onChange={(e) => {
                           setEmail(e.target.value);
                         }}

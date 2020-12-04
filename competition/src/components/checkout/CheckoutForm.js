@@ -53,13 +53,13 @@ const CheckoutForm = forwardRef((props, ref) => {
   const stripe = useStripe();
   const elements = useElements();
   const options = useOptions();
-  const [error, setError] = useState("");
+  const [transactionErr, setransactionErr] = useState("");
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState(false);
   const [pay, setPay] = useState(props.amount);
   const [codeErrorMsg, setCodeErrorMsg] = useState("");
-  const dispatch = useDispatch();
+
   const [billingDetails, setBillingDetails] = useState({
     name: "",
     address: {
@@ -70,6 +70,10 @@ const CheckoutForm = forwardRef((props, ref) => {
   const [displayBillingDetailsErr, setDisplayBillingDetailsErr] = useState(
     false
   );
+
+  const [cardNumberError, setCardNumberError] = useState(false);
+  const [expiryDateError, setExpiryDateError] = useState(false);
+  const [cvvError, setCvvError] = useState(false);
 
   useImperativeHandle(ref, () => {
     return { handlePayCheckOut: handlePayCheckOut };
@@ -114,6 +118,15 @@ const CheckoutForm = forwardRef((props, ref) => {
         setLoading(false);
         props.onFailure();
         console.log("[error]", error);
+        if (error.type === "validation_error") {
+          if (error.code === "incomplete_number") {
+            setCardNumberError(true);
+          } else if (error.code === "incomplete_expiry") {
+            setExpiryDateError(true);
+          } else if (error.code === "incomplete_cvc") {
+            setCvvError(true);
+          }
+        }
       } else {
         stripePaymentMethodHandler(paymentMethod);
       }
@@ -122,6 +135,7 @@ const CheckoutForm = forwardRef((props, ref) => {
       setLoading(false);
     }
   };
+  
   const stripePaymentMethodHandler = async (paymentMethod) => {
     // send paymentMethod.id to the server
     try {
@@ -138,15 +152,17 @@ const CheckoutForm = forwardRef((props, ref) => {
 
       // Handle server response
       handleServerResponse(paymentResponse);
-    } catch (err) {
+    } catch (error) {
       props.onFailure();
-      console.log(err);
+     // console.log('error', error.response.data.code);
+      setransactionErr(error?.response?.data?.code ? error?.response?.data?.code : 'payment declined')
       setLoading(false);
     }
   };
 
   const handleServerResponse = async (response) => {
     const { stripe } = props;
+    console.log(response)
     if (response.error) {
       // Show error from server on payment form
       history.replace({
@@ -202,7 +218,7 @@ const CheckoutForm = forwardRef((props, ref) => {
   return (
     // <form onSubmit={handleSubmit}>
     <form>
-      {error && <div className="error">{error}</div>}
+      {transactionErr && <div className="error">{transactionErr}</div>}
       {props.showCouponCode && (
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={10}>
@@ -287,7 +303,10 @@ const CheckoutForm = forwardRef((props, ref) => {
       <TextField
         label="Credit Card Number"
         name="ccnumber"
-        // variant="outlined"
+        error={cardNumberError}
+        onChange={()=>{
+         setCardNumberError(false)
+        }}
         required
         fullWidth
         style={{ marginTop: 15, marginBottom: 15 }}
@@ -303,15 +322,18 @@ const CheckoutForm = forwardRef((props, ref) => {
       <TextField
         label="Expiration date"
         name="ccexpdate"
-        // variant="outlined"
         required
         fullWidth
+        error={expiryDateError}
+        onChange={()=>{
+          setExpiryDateError(false)
+         }}
         style={{ marginTop: 15, marginBottom: 15 }}
         InputProps={{
           inputComponent: StripeInput,
           inputProps: {
             component: CardExpiryElement,
-            options: { ...options },
+            options: { ...options, showIcon: true },
           },
         }}
         InputLabelProps={{ shrink: true }}
@@ -319,9 +341,12 @@ const CheckoutForm = forwardRef((props, ref) => {
       <TextField
         label="CVC"
         name="cccvc"
-        // variant="outlined"
         required
         fullWidth
+        error={cvvError}
+        onChange={()=>{
+          setCvvError(false)
+         }}
         style={{ marginTop: 15, marginBottom: 15 }}
         InputProps={{
           inputComponent: StripeInput,

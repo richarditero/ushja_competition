@@ -256,7 +256,7 @@ function CompetitionEvents(props) {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Typography className={classes.headerText}>
-                Please fill competition details
+              Please fill in your competition details.
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -296,7 +296,7 @@ function CompetitionEvents(props) {
                   style={{margin: 0}}
                   margin="normal"
                   id="date-picker-dialog"
-                  label="Competition Date"
+                  label="Competition Date (MM/DD/YYY)"
                   format="MM-dd-yyyy"
                   value={formData.competitionDate}
                   helperText={''}
@@ -331,7 +331,7 @@ function CompetitionEvents(props) {
             </Grid>
             <Grid item xs={12}>
               <Typography className={classes.headerText}>
-                I wish pay the following USHJA competitions Fees:
+                I wish pay the following USHJA competitions fees:
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -438,7 +438,7 @@ function CompetitionEvents(props) {
               <div>
                 <div className="pdfName-container">
                   <p className={classes.headerText}>
-                    Upload Result / Declaration :{' '}
+                  Upload Results and/or Declarations :{' '}
                   </p>
                   <p className="pdf-name">{uploadedDocument.fileName}</p>
                 </div>

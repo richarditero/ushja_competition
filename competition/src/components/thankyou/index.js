@@ -16,7 +16,7 @@ function Thankyou(props) {
           <Box mt={2}>
             <Typography variant="h5">
               {props?.location?.state?.type === 'success'
-                ? 'Your payment has been received'
+                ? 'Your payment has been received.  You will be receiving an email shortly withconfirmation of your payment.'
                 : 'Please contact admin'}
             </Typography>
           </Box>

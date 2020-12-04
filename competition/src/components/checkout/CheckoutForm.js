@@ -3,25 +3,25 @@ import React, {
   useEffect,
   forwardRef,
   useState,
-  useImperativeHandle
-} from 'react';
+  useImperativeHandle,
+} from "react";
 
 import {
   useStripe,
   useElements,
   CardNumberElement,
   CardCvcElement,
-  CardExpiryElement
-} from '@stripe/react-stripe-js';
-import {TextField, Grid} from '@material-ui/core';
-import PropTypes from 'prop-types';
-import {useDispatch, useSelector} from 'react-redux';
-import {showSuccessSnackbar} from '../../store/action/snackbarAction';
-import strings from '../../i18n/Strings';
-import {ApiUtil} from '../../util/ApiUtil';
-import {Button, Spinner} from 'react-bootstrap';
-import StripeInput from '../shared/hoc/StripeInput';
-import {useHistory} from 'react-router-dom';
+  CardExpiryElement,
+} from "@stripe/react-stripe-js";
+import { TextField, Grid } from "@material-ui/core";
+import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import { showSuccessSnackbar } from "../../store/action/snackbarAction";
+import strings from "../../i18n/Strings";
+import { ApiUtil } from "../../util/ApiUtil";
+import { Button, Spinner } from "react-bootstrap";
+import StripeInput from "../shared/hoc/StripeInput";
+import { useHistory } from "react-router-dom";
 
 const useOptions = () => {
   const fontSize = 18;
@@ -30,17 +30,17 @@ const useOptions = () => {
       style: {
         base: {
           fontSize,
-          color: '#424770',
-          letterSpacing: '0.025em',
-          fontFamily: 'Source Code Pro, monospace',
-          '::placeholder': {
-            color: '#aab7c4'
-          }
+          color: "#424770",
+          letterSpacing: "0.025em",
+          fontFamily: "Source Code Pro, monospace",
+          "::placeholder": {
+            color: "#aab7c4",
+          },
         },
         invalid: {
-          color: '#9e2146'
-        }
-      }
+          color: "#9e2146",
+        },
+      },
     }),
     [fontSize]
   );
@@ -53,43 +53,41 @@ const CheckoutForm = forwardRef((props, ref) => {
   const stripe = useStripe();
   const elements = useElements();
   const options = useOptions();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState(false);
   const [pay, setPay] = useState(props.amount);
-  const [codeErrorMsg, setCodeErrorMsg] = useState('');
+  const [codeErrorMsg, setCodeErrorMsg] = useState("");
   const dispatch = useDispatch();
   const [billingDetails, setBillingDetails] = useState({
-    name: '',
+    name: "",
     address: {
-      line1: '',
-      postal_code: ''
-    }
+      line1: "",
+      postal_code: "",
+    },
   });
   const [displayBillingDetailsErr, setDisplayBillingDetailsErr] = useState(
     false
   );
 
   useImperativeHandle(ref, () => {
-    return {handlePayCheckOut: handlePayCheckOut};
+    return { handlePayCheckOut: handlePayCheckOut };
   });
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-
-
   useEffect(() => {
     setPay(props.amount);
   }, [props.amount]);
 
   const handlePayCheckOut = async () => {
-    console.log('calling');
+    console.log("calling");
     setLoading(true);
     if (!stripe || !elements) {
-      console.log('not loaded');
+      console.log("not loaded");
       props.onFailure();
       setLoading(false);
       return;
@@ -100,25 +98,23 @@ const CheckoutForm = forwardRef((props, ref) => {
       !billingDetails.address.line1 ||
       !billingDetails.address.postal_code
     ) {
-      console.log('inside if');
+      console.log("inside if");
       setLoading(false);
       return setDisplayBillingDetailsErr(true);
     }
 
     try {
-      const {error, paymentMethod} = await stripe.createPaymentMethod({
-        type: 'card',
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: "card",
         card: elements.getElement(CardNumberElement),
-        billing_details: billingDetails
+        billing_details: billingDetails,
       });
 
       if (error) {
         setLoading(false);
         props.onFailure();
-        console.log('[error]', error);
+        console.log("[error]", error);
       } else {
-        console.log('[PaymentMethod]', paymentMethod);
-
         stripePaymentMethodHandler(paymentMethod);
       }
     } catch (err) {
@@ -126,16 +122,16 @@ const CheckoutForm = forwardRef((props, ref) => {
       setLoading(false);
     }
   };
-  const stripePaymentMethodHandler = async paymentMethod => {
+  const stripePaymentMethodHandler = async (paymentMethod) => {
     // send paymentMethod.id to the server
     try {
-      const paymentResponse = await ApiUtil.postData('payment/open', {
-        payment_method_id: paymentMethod.id,
+      const paymentResponse = await ApiUtil.postData("payment/open", {
+        paymentMethod,
         checkoutData: props.checkoutData,
         amount: pay,
         type: props.type,
         username: props.username,
-        userEmail: props.userEmail
+        userEmail: props.userEmail,
       });
 
       setLoading(false);
@@ -149,57 +145,58 @@ const CheckoutForm = forwardRef((props, ref) => {
     }
   };
 
-  const handleServerResponse = async response => {
-    const {stripe} = props;
+  const handleServerResponse = async (response) => {
+    const { stripe } = props;
     if (response.error) {
       // Show error from server on payment form
       history.replace({
-        pathname: '/completed',
+        pathname: "/completed",
         state: {
-          type: 'failure'
-        }
+          type: "failure",
+        },
       });
     } else if (response.requires_action) {
       // Use Stripe.js to handle the required card action
-      const {error: errorAction, paymentIntent} = await stripe.handleCardAction(
-        response.payment_intent_client_secret
-      );
+      const {
+        error: errorAction,
+        paymentIntent,
+      } = await stripe.handleCardAction(response.payment_intent_client_secret);
 
       if (errorAction) {
         // Show error from Stripe.js in payment form
         history.push({
-          pathname: '/completed',
+          pathname: "/completed",
           state: {
-            type: 'failure'
-          }
+            type: "failure",
+          },
         });
       } else {
         // The card action has been handled
         // The PaymentIntent can be confirmed again on the server
 
-        const serverResponse = await ApiUtil.postData('payment/open', {
+        const serverResponse = await ApiUtil.postData("payment/open", {
           payment_intent_id: paymentIntent.id,
           checkoutData: props.checkoutData,
           amount: pay,
-          type: props.type
+          type: props.type,
         });
         handleServerResponse(serverResponse);
       }
     } else {
       history.push({
-        pathname: '/completed',
+        pathname: "/completed",
         state: {
-          type: 'success'
-        }
+          type: "success",
+        },
       });
     }
   };
   const handleApply = async () => {
-    if (code === '') {
+    if (code === "") {
       setCodeError(true);
     } else {
       setCodeError(false);
-      setCodeErrorMsg('');
+      setCodeErrorMsg("");
     }
   };
   return (
@@ -215,10 +212,10 @@ const CheckoutForm = forwardRef((props, ref) => {
               placeholder="Coupon code"
               fullWidth
               value={code}
-              onChange={e => {
+              onChange={(e) => {
                 setCode(e.target.value);
               }}
-              InputLabelProps={{shrink: true}}
+              InputLabelProps={{ shrink: true }}
               error={codeError}
               helperText={codeErrorMsg}
             />
@@ -227,7 +224,8 @@ const CheckoutForm = forwardRef((props, ref) => {
             <Button
               className="apply"
               variant="primary"
-              onClick={() => handleApply()}>
+              onClick={() => handleApply()}
+            >
               Apply
             </Button>
           </Grid>
@@ -239,12 +237,12 @@ const CheckoutForm = forwardRef((props, ref) => {
         name="name"
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
-        InputLabelProps={{shrink: true}}
+        style={{ marginTop: 15, marginBottom: 15 }}
+        InputLabelProps={{ shrink: true }}
         value={billingDetails.name}
         error={displayBillingDetailsErr && !billingDetails.name}
-        onChange={e => {
-          setBillingDetails({...billingDetails, name: e.target.value});
+        onChange={(e) => {
+          setBillingDetails({ ...billingDetails, name: e.target.value });
         }}
       />
 
@@ -253,16 +251,16 @@ const CheckoutForm = forwardRef((props, ref) => {
         name="line1"
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
-        InputLabelProps={{shrink: true}}
+        style={{ marginTop: 15, marginBottom: 15 }}
+        InputLabelProps={{ shrink: true }}
         error={displayBillingDetailsErr && !billingDetails.address.line1}
-        onChange={e => {
+        onChange={(e) => {
           setBillingDetails({
             ...billingDetails,
             address: {
               ...billingDetails.address,
-              line1: e.target.value
-            }
+              line1: e.target.value,
+            },
           });
         }}
       />
@@ -273,15 +271,15 @@ const CheckoutForm = forwardRef((props, ref) => {
         error={displayBillingDetailsErr && !billingDetails.address.postal_code}
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
-        InputLabelProps={{shrink: true}}
-        onChange={e => {
+        style={{ marginTop: 15, marginBottom: 15 }}
+        InputLabelProps={{ shrink: true }}
+        onChange={(e) => {
           setBillingDetails({
             ...billingDetails,
             address: {
               ...billingDetails.address,
-              postal_code: e.target.value
-            }
+              postal_code: e.target.value,
+            },
           });
         }}
       />
@@ -292,15 +290,15 @@ const CheckoutForm = forwardRef((props, ref) => {
         // variant="outlined"
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
+        style={{ marginTop: 15, marginBottom: 15 }}
         InputProps={{
           inputComponent: StripeInput,
           inputProps: {
             component: CardNumberElement,
-            options: {...options, showIcon: true}
-          }
+            options: { ...options, showIcon: true },
+          },
         }}
-        InputLabelProps={{shrink: true}}
+        InputLabelProps={{ shrink: true }}
       />
       <TextField
         label="Expiration date"
@@ -308,15 +306,15 @@ const CheckoutForm = forwardRef((props, ref) => {
         // variant="outlined"
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
+        style={{ marginTop: 15, marginBottom: 15 }}
         InputProps={{
           inputComponent: StripeInput,
           inputProps: {
             component: CardExpiryElement,
-            options: {...options}
-          }
+            options: { ...options },
+          },
         }}
-        InputLabelProps={{shrink: true}}
+        InputLabelProps={{ shrink: true }}
       />
       <TextField
         label="CVC"
@@ -324,28 +322,29 @@ const CheckoutForm = forwardRef((props, ref) => {
         // variant="outlined"
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
+        style={{ marginTop: 15, marginBottom: 15 }}
         InputProps={{
           inputComponent: StripeInput,
           inputProps: {
             component: CardCvcElement,
-            options: {...options}
-          }
+            options: { ...options },
+          },
         }}
-        InputLabelProps={{shrink: true}}
+        InputLabelProps={{ shrink: true }}
       />
 
       <Button
         className="pay-button"
         variant="primary"
-        onClick={e => handlePayCheckOut()}
-        disabled={loading || !stripe}>
+        onClick={(e) => handlePayCheckOut()}
+        disabled={loading || !stripe}
+      >
         {loading && (
           <Spinner
             animation="border"
             variant="light"
             size="sm"
-            style={{marginRight: 10}}
+            style={{ marginRight: 10 }}
           />
         )}
         Pay - ${pay}
@@ -364,14 +363,14 @@ CheckoutForm.propTypes = {
   type: PropTypes.string,
   showCouponCode: PropTypes.bool,
   onSuccess: PropTypes.function,
-  onFailure: PropTypes.function
+  onFailure: PropTypes.function,
 };
 
 CheckoutForm.defaultProps = {
   amount: 0,
-  type: '',
+  type: "",
   checkoutData: {},
   showCouponCode: false,
   onSuccess: () => {},
-  onFailure: () => {}
+  onFailure: () => {},
 };

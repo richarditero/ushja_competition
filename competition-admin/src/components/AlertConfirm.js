@@ -43,10 +43,10 @@ export default function AlertDialog(props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleClose('cancel')} color="primary">
-            Disagree
+            No
           </Button>
           <Button onClick={() => handleClose('confirm')} color="secondary">
-            Agree
+            Yes
           </Button>
         </DialogActions>
       </Dialog>

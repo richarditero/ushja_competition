@@ -296,8 +296,8 @@ function CompetitionEvents(props) {
                   style={{margin: 0}}
                   margin="normal"
                   id="date-picker-dialog"
-                  label="Competition Date (MM/DD/YYY)"
-                  format="MM-dd-yyyy"
+                  label="Competition Date (MM/DD/YYYY)"
+                  format="MM/dd/yyyy"
                   value={formData.competitionDate}
                   helperText={''}
                   fullWidth

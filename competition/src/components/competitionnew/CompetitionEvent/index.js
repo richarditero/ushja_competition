@@ -62,7 +62,6 @@ function CompetitionEvents(props) {
     uploaded_document_name: '',
     uploaded_document_mimeType: ''
   });
-  const [inputValue, setInputValue] = useState('MM-DD-YY');
 
   const [uploadedDocument, setUploadedDocument] = useState({
     fileName: '',
@@ -104,7 +103,7 @@ function CompetitionEvents(props) {
           return {
             ...value,
             isChecked: !value.isChecked,
-            quantity: value.quantity > 0 ? value.quantity : 1
+            quantity: value.quantity > 0 ? value.quantity : 0
           };
         }
         return value;
@@ -190,11 +189,10 @@ function CompetitionEvents(props) {
   }, [competitionEvents]);
 
   const onSubmit = () => {
-    console.log(formData);
 
     const summary = competitionEvents
       .map(({competitionEventId, quantity, isChecked}) => {
-        if (quantity > 0 && isChecked) return {competitionEventId, quantity};
+        if ( isChecked) return {competitionEventId, quantity};
       })
       .filter(val => {
         if (val) {
@@ -202,9 +200,22 @@ function CompetitionEvents(props) {
         }
       });
 
+      const quantityCheck = competitionEvents
+      .filter((val) => {
+        if (val.quantity < 1 && val.isChecked) return val;
+      });
+      
+
+
     if (summary.length < 1) {
       return dispatch(
         showFailureSnackbar(strings.displayText.selectAtLeaseOneCompetition)
+      );
+    }
+
+    if (quantityCheck.length !==0) {
+      return dispatch(
+        showFailureSnackbar('Input valid number of horses')
       );
     }
 

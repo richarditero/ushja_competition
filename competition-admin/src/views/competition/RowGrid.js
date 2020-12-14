@@ -16,6 +16,8 @@ import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import moment from "moment";
+import SendIcon from "@material-ui/icons/Send";
+import DoneIcon from "@material-ui/icons/Done";
 const useRowStyles = makeStyles({
   gridDeatilsrow: {
     display: "flex",
@@ -95,6 +97,45 @@ export default function RowGrid(props) {
                 }
               }}
             />
+          </Tooltip>
+        </TableCell>
+
+        <TableCell align="center">
+          <Tooltip
+            title={
+              props.invoiceDocument
+                ? "download invoice file"
+                : "Invoice file not available"
+            }
+          >
+            <GetAppIcon
+              href={props.invoiceDocument}
+              style={{
+                color: props.invoiceDocument ? "black" : "#777777",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                if (props.invoiceDocument) {
+                  Object.assign(document.createElement("a"), {
+                    target: "_blank",
+                    href: props.invoiceDocument,
+                  }).click();
+                }
+              }}
+            />
+          </Tooltip>
+        </TableCell>
+
+        <TableCell>
+          <Tooltip title= {!props.resent ? "resend invoice":""}>
+            <IconButton
+            disabled={props.resent}
+              onClick={() => {
+                props.resendInvoice(props);
+              }}
+            >
+              {props.resent ? <DoneIcon style={{color:"green"}}/> : <SendIcon />}
+            </IconButton>
           </Tooltip>
         </TableCell>
 

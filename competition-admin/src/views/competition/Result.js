@@ -165,6 +165,14 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
       name: "Download",
       sort: "download",
     },
+    {
+      name: "Download Invoice",
+      sort: "invoice",
+    },
+    {
+      name: "Resend Invoice",
+      sort: "invoice",
+    },
   ];
 
   useEffect(() => {
@@ -177,7 +185,6 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
       `open-competition?search=&limit=${rowsPerPage}&offset=${page}&orderby=${orderBy}&order=${order}`
     ).then((result) => {
       if (result.status === 200) {
-        console.log(result.data);
         setTotal(result.data.count);
         setRows(result.data.rows);
         handlePageLoder(false);
@@ -190,6 +197,25 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
       orderBy !== property ? "asc" : order === "asc" ? "desc" : "asc";
     setOrderBy(property);
     setOrder(changesOrder);
+  };
+
+  const resendInvoice = ({ openCompetitionPaymentId }) => {
+    setRows((prevRows) =>
+      prevRows.map((val) => {
+        if (val.openCompetitionPaymentId === openCompetitionPaymentId) {
+          val.resent = true;
+          return val;
+        }
+        return val;
+      })
+    );
+
+    ApiUtil.getWithToken(
+      `open-competition/resendInvoice/${openCompetitionPaymentId}`
+    ).then((result) => {
+     
+    }).catch((err)=>console.log(err));
+
   };
 
   return (
@@ -226,7 +252,7 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
 
             <TableBody>
               {rows.map((row) => (
-                <Row {...row} />
+                <Row {...row} resendInvoice={resendInvoice} />
               ))}
             </TableBody>
           </Table>

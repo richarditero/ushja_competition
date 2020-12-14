@@ -1,5 +1,5 @@
 const dev = 'http://localhost:80/admin';
-const production = 'https://postcompapi.ushja.org/api/admin/';
+const production = 'https://postcompapi.ushja.org/admin';
 const API_URI = process.env.REACT_APP_ENV === 'production' ? production : dev;
 
 module.exports = {

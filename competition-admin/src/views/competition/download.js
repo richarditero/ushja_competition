@@ -19,7 +19,6 @@ export default function Download({ handlePageLoder }) {
       if (result.status === 200) {
         const data = result.data.rows;
         let arr = [];
-        console.log(data);
 
         for (let i = 0; i < data.length; i++) {
           let temp = data[i].open_competition_purchaseds.map((val) => {
@@ -41,22 +40,7 @@ export default function Download({ handlePageLoder }) {
           });
           arr = [...arr, ...temp];
         }
-        console.log(arr);
 
-        /*         data.map((d) => {
-          arr.push({
-            competitionName: d.competitionName,
-            username: d.username,
-            userEmail: d.userEmail,
-            compFormName: d.compFormName,
-            transactionId: d.transactionId,
-            amount: d.amount,
-            competitionDate: d.competitionDate,
-            location: d.location,
-            events: _.map(d.open_competition_purchaseds, 'name').join(' ,'),
-            status: d.status,
-          });
-        }); */
         handlePageLoder(false);
         setExcelData(arr);
         setExcelData(null);

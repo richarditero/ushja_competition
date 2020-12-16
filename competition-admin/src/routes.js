@@ -23,7 +23,7 @@ const routes = (isLoggedIn) => [
   },
   {
     path: '/',
-    element: !isLoggedIn ? <MainLayout /> : <Navigate to="/app/dashboard" />,
+    element: !isLoggedIn ? <MainLayout /> : <Navigate to="/app/open-competition" />,
     children: [
       { path: 'login', element: <Login /> },
       { path: '/', element: <Navigate to="/login" /> },

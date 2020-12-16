@@ -203,7 +203,7 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
   };
 
   const resendInvoice = ({ openCompetitionPaymentId }) => {
-    dispatch(showSuccessSnackbar('Rensend invoice email - initiated'));
+    dispatch(showSuccessSnackbar('Invoice email resent successfully'));
 
     ApiUtil.getWithToken(
       `open-competition/resendInvoice/${openCompetitionPaymentId}`

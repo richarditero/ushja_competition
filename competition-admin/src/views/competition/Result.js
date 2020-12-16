@@ -19,6 +19,8 @@ import {
 import FilterListIcon from "@material-ui/icons/FilterList";
 import ApiUtil from "../../util/ApiUtil";
 import Row from "./RowGrid";
+import { useDispatch } from "react-redux";
+import { showSuccessSnackbar } from "../../store/action/snackbarAction";
 
 const useToolbarStyles = makeStyles((theme) => ({
   root: {
@@ -107,6 +109,7 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
   const classes = useStyles();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("competitionName");
+  const dispatch = useDispatch();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -200,22 +203,13 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
   };
 
   const resendInvoice = ({ openCompetitionPaymentId }) => {
-    setRows((prevRows) =>
-      prevRows.map((val) => {
-        if (val.openCompetitionPaymentId === openCompetitionPaymentId) {
-          val.resent = true;
-          return val;
-        }
-        return val;
-      })
-    );
+    dispatch(showSuccessSnackbar('Rensend invoice email - initiated'));
 
     ApiUtil.getWithToken(
       `open-competition/resendInvoice/${openCompetitionPaymentId}`
-    ).then((result) => {
-     
-    }).catch((err)=>console.log(err));
-
+    )
+      .then((result) => {})
+      .catch((err) => console.log(err));
   };
 
   return (

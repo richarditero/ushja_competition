@@ -127,14 +127,26 @@ export default function RowGrid(props) {
         </TableCell>
 
         <TableCell>
-          <Tooltip title= {!props.resent ? "resend invoice":""}>
+          <Tooltip
+            title={
+              !props.resent
+                ? props.status === "succeeded"
+                  ? "resend invoice"
+                  : "Payment failed.Can't send invoice"
+                : ""
+            }
+          >
             <IconButton
-            disabled={props.resent}
+              disabled={!props.status === "succeeded"}
               onClick={() => {
                 props.resendInvoice(props);
               }}
             >
-              {props.resent ? <DoneIcon style={{color:"green"}}/> : <SendIcon />}
+              {props.resent ? (
+                <DoneIcon style={{ color: "green" }} />
+              ) : (
+                <SendIcon />
+              )}
             </IconButton>
           </Tooltip>
         </TableCell>

@@ -26,7 +26,7 @@ export default function SnackBar() {
     <div>
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={4000}
+        autoHideDuration={3000}
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',

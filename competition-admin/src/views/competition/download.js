@@ -24,6 +24,7 @@ export default function Download({ handlePageLoder }) {
           let temp = data[i].open_competition_purchaseds.map((val) => {
             return {
               competitionName: data[i].competitionName,
+              competitionId:data[i].competitionId, 
               username: data[i].username,
               userEmail: data[i].userEmail,
               compFormName: data[i].compFormName,
@@ -35,7 +36,8 @@ export default function Download({ handlePageLoder }) {
               competitionDate: data[i].competitionDate,
               location: data[i].location,
               status: data[i].status,
-              card:data[i].cardType
+              card:data[i].cardType,
+              transactionDate:new Date(data[i].createdAt)
             };
           });
           arr = [...arr, ...temp];
@@ -82,6 +84,7 @@ export default function Download({ handlePageLoder }) {
         >
           <ExcelSheet data={excelData} name="Payment Details">
             <ExcelColumn label="Competition Name" value="competitionName" />
+            <ExcelColumn label="Competition Id" value="competitionId" />
             <ExcelColumn label="Applicant Name" value="username" />
             <ExcelColumn label="Email" value="userEmail" />
             <ExcelColumn label="Competition Form" value="compFormName" />
@@ -94,6 +97,7 @@ export default function Download({ handlePageLoder }) {
             <ExcelColumn label="Location" value="location" />
             <ExcelColumn label="Card" value="card" />
             <ExcelColumn label="Status" value="status" />
+            <ExcelColumn label="Transaction Date" value="transactionDate" />
           </ExcelSheet>
         </ExcelFile>
       ) : null}

@@ -1,6 +1,6 @@
 
 import Layout from './layout';
-import Checkout from './checkout';
+import Checkout from './payment';
 
 import PaymentSummary from './paymentSummary';
 

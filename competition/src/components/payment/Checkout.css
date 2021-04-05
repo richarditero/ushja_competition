@@ -1,9 +1,10 @@
 .checkout-root {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   margin: 0;
+  background: white !important;
 }
 .checkout-bg {
-  background-color: #f6f9fc;
+  background-color: #ffffff;
 }
 .checkout-wrapper {
   margin: 0 auto;
@@ -13,12 +14,11 @@
   flex-direction: column;
 }
 
-.checkout {
+.c-checkout {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-bottom: 40%;
 }
 
 .card-label {
@@ -43,11 +43,12 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.025em;
-  background-color: #6772e5;
+  background-color: #ec5269;
   text-decoration: none;
   -webkit-transition: all 150ms ease;
   transition: all 150ms ease;
   margin-top: 10px;
+  width: 100%;
 }
 
 .pay-button:hover {
@@ -67,7 +68,7 @@
   font-family: 'Source Code Pro', monospace;
   box-shadow: rgba(50, 50, 93, 0.14902) 0px 1px 3px,
     rgba(0, 0, 0, 0.0196078) 0px 1px 0px;
-  border: 0;
+  border: 1px solid;
   outline: 0;
   border-radius: 4px;
   background: white;
@@ -100,5 +101,12 @@
 }
 .error {
   margin-bottom: 0.8rem;
-  color: #f44336;
+  color: rgb(128, 28, 28);
+}
+
+.apply {
+  background-color: #ec5269 !important;
+  color: white !important;
+  text-transform: none !important;
+  border-radius: 0px !important;
 }

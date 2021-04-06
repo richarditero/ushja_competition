@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
-import {ApiUtil} from '../../util/ApiUtil';
-import {Table, Spinner} from 'react-bootstrap';
-import './PaymentSummary.css';
-import strings from '../../i18n/Strings';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { ApiUtil } from "../../util/ApiUtil";
+import { Table, Spinner } from "react-bootstrap";
+import "./PaymentSummary.css";
+import strings from "../../i18n/Strings";
 
-function CompetitionPaymentSummary({checkoutData}) {
+const CompetitionPaymentSummary = React.memo(({ checkoutData }) => {
   const [payemtItems, setPayemtItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -16,20 +16,20 @@ function CompetitionPaymentSummary({checkoutData}) {
     // deepclone checkoutData
     let apiData = JSON.parse(JSON.stringify(checkoutData));
     // delete uploaded_document
-    delete apiData.formData['uploaded_document'];
+    delete apiData.formData["uploaded_document"];
 
     ApiUtil.postData(
       `${strings.apiRouter.competition}/${strings.apiRouter.paymentSummary}`,
       {
-        checkoutData: apiData
+        checkoutData: apiData,
       }
     )
-      .then(res => {
+      .then((res) => {
         setPayemtItems(res.data.items);
         setTotalAmount(res.data.total);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setLoading(false);
         console.log(err);
       });
@@ -38,7 +38,7 @@ function CompetitionPaymentSummary({checkoutData}) {
   return (
     <>
       {loading ? (
-        <div style={{display: 'flex', justifyContent: 'center'}}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <Spinner animation="border" variant="primary" />
         </div>
       ) : (
@@ -46,7 +46,7 @@ function CompetitionPaymentSummary({checkoutData}) {
           <p className="bold-text">Payment Summary</p>
           <Table>
             <tbody>
-              {payemtItems.map(event => {
+              {payemtItems.map((event) => {
                 return (
                   <tr key={event.competitionEventId}>
                     <td>
@@ -68,8 +68,8 @@ function CompetitionPaymentSummary({checkoutData}) {
       )}
     </>
   );
-}
+});
 CompetitionPaymentSummary.propTypes = {
-  checkoutData: PropTypes.object
+  checkoutData: PropTypes.object,
 };
 export default CompetitionPaymentSummary;

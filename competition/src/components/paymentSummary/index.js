@@ -1,17 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import CompetitionPaymentSummary from './CompetitionPaymentSummary';
-import MembershipPaymentSummary from './MembershipPaymentSummary';
+import React from "react";
+import PropTypes from "prop-types";
+import CompetitionPaymentSummary from "./CompetitionPaymentSummary";
+import MembershipPaymentSummary from "./MembershipPaymentSummary";
 
-import {Container} from 'react-bootstrap';
+import { Container } from "react-bootstrap";
 
-function PaymentSummary({type, checkoutData}) {
+function PaymentSummary({ type, checkoutData }) {
   const PaymentInfo = () => {
     switch (type) {
-      case 'membership':
+      case "membership":
         return <MembershipPaymentSummary checkoutData={checkoutData} />;
-      case 'competition':
-      case 'openCompetition':
+      case "competition":
+      case "openCompetition":
         return <CompetitionPaymentSummary checkoutData={checkoutData} />;
       default:
         return <div />;
@@ -27,7 +27,7 @@ function PaymentSummary({type, checkoutData}) {
 
 PaymentSummary.propTypes = {
   type: PropTypes.string,
-  checkoutData: PropTypes.object
+  checkoutData: PropTypes.object,
 };
 
-export default PaymentSummary;
+export default React.memo(PaymentSummary);

@@ -90,24 +90,17 @@ export const ApiUtil = {
       }
     });
   },
-  postWithToken: (url, data) => {
+  postWithoutToken: (url, data) => {
     return new Promise((resolve, reject) => {
-      const credentials = JSON.parse(localStorage.getItem('credentials'));
-      if (credentials?.AccessToken && credentials?.TokenType) {
         axios
-          .post(`${api}/${url}`, data, {
-            headers: {
-              'x-access-token': credentials.AccessToken,
-              'x-access-token-type': credentials.TokenType
-            }
-          })
+          .post(`${api}/${url}`, data)
           .then(result => {
             resolve(result);
           })
           .catch(err => {
             reject(err);
           });
-      }
+      
     });
   },
   putWithToken: (url, data) => {

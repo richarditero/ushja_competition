@@ -8,7 +8,7 @@ function MembershipPaymentSummary(props) {
 
   useEffect(() => {
     setLoading(true);
-    ApiUtil.postWithToken('member/paymentSummary', {
+    ApiUtil.postWithoutToken('member/paymentSummary', {
       membershipPlanId: props?.checkoutData?.membershipPlanId
     })
       .then(res => {

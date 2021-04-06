@@ -115,13 +115,13 @@ const CheckoutForm = forwardRef((props, ref) => {
     }
 
     const c_d = {billingDetails, cardNumber, expiry, cvc};
-    checkout(c_d);
     props.setPayLoading(true);
+    checkout(c_d);
   };
 
   const checkout = async c_d => {
     try {
-      const paymentResponse = await ApiUtil.postWithToken(
+      const paymentResponse = await ApiUtil.postWithoutToken(
         'payment/open',
         {
           c_d,
@@ -132,9 +132,10 @@ const CheckoutForm = forwardRef((props, ref) => {
           userEmail: props.userEmail,
         }
       );
-
+      console.log(paymentResponse)
       props.onSuccess(paymentResponse);
     } catch (err) {
+      console.log(err);
       props.onFailure(err);
     }
   };
@@ -158,7 +159,7 @@ const CheckoutForm = forwardRef((props, ref) => {
 
   const getDiscountCoupon = () => {
     setCouponLoading(true);
-    ApiUtil.postWithToken('discount/apply', {code})
+    ApiUtil.postWithoutToken('discount/apply', {code})
       .then(res => {
         setCouponLoading(false);
         validateCoupon(res.data);

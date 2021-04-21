@@ -22,7 +22,7 @@ function Checkout({location, componetProps}) {
   const onSuccess = () => {
     setLoading(false);
     console.log('onSuccess');
-    return history.push({
+    return history.replace({
       pathname: '/completed',
       state: {
         type: 'success'

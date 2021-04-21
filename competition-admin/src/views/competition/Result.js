@@ -144,6 +144,7 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
     },
     {
       name: "Date",
+      sort: "date",
     },
     {
       name: "Form name",
@@ -159,22 +160,18 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
     },
     {
       name: "Status",
-      sort: "status",
     },
     {
       name: "Card type",
     },
     {
       name: "Download",
-      sort: "download",
     },
     {
       name: "Download Invoice",
-      sort: "invoice",
     },
     {
       name: "Resend Invoice",
-      sort: "invoice",
     },
   ];
 
@@ -203,7 +200,7 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
   };
 
   const resendInvoice = ({ openCompetitionPaymentId }) => {
-    dispatch(showSuccessSnackbar('Invoice email resent successfully'));
+    dispatch(showSuccessSnackbar("Invoice email resent successfully"));
 
     ApiUtil.getWithToken(
       `open-competition/resendInvoice/${openCompetitionPaymentId}`
@@ -224,20 +221,25 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
                   <TableCell
                     key={`${index}${header.name}`}
                     className={classes.header}
+                    sortDirection={false}
                   >
-                    <TableSortLabel
-                      active={orderBy === header.sort}
-                      direction={
-                        orderBy !== header.sort
-                          ? "desc"
-                          : order === "asc"
-                          ? "asc"
-                          : "desc"
-                      }
-                      onClick={(e) => handleRequestSort(e, header.sort)}
-                    >
-                      {header.name}
-                    </TableSortLabel>
+                    {header.sort ? (
+                      <TableSortLabel
+                        active={orderBy === header.sort}
+                        direction={
+                          orderBy !== header.sort
+                            ? "desc"
+                            : order === "asc"
+                            ? "asc"
+                            : "desc"
+                        }
+                        onClick={(e) => handleRequestSort(e, header.sort)}
+                      >
+                        {header.name}
+                      </TableSortLabel>
+                    ) : (
+                      <div>{header.name}</div>
+                    )}
                   </TableCell>
                 ))}
                 <TableCell />

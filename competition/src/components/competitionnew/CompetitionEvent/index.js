@@ -191,8 +191,8 @@ function CompetitionEvents(props) {
   const onSubmit = () => {
 
     const summary = competitionEvents
-      .map(({competitionEventId, quantity, isChecked}) => {
-        if ( isChecked) return {competitionEventId, quantity};
+      .map(({competitionEventId, quantity,name,price, isChecked}) => {
+        if ( isChecked) return {competitionEventId, quantity,name,price};
       })
       .filter(val => {
         if (val) {

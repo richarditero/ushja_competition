@@ -3,10 +3,11 @@ import React, {
   forwardRef,
   useState,
   useImperativeHandle,
-  useRef
-} from 'react';
+  useRef,
+} from "react";
 
-import CreditCardInput from './CardElement';
+import CreditCardInput from "./CardElement";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import {
   TextField,
@@ -14,41 +15,46 @@ import {
   Button,
   Box,
   CircularProgress,
-  Typography
-} from '@material-ui/core';
-import PropTypes from 'prop-types';
-import strings from '../../i18n/Strings';
-import {ApiUtil} from '../../util/ApiUtil';
+  Typography,
+} from "@material-ui/core";
+import PropTypes from "prop-types";
+import { ApiUtil } from "../../util/ApiUtil";
+import { useDispatch } from "react-redux";
 
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from "@material-ui/icons/Close";
+import { showFailureSnackbar } from "../../store/action/snackbarAction";
 
 const CheckoutForm = forwardRef((props, ref) => {
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState(false);
   const [pay, setPay] = useState(props.amount);
-  const [codeErrorMsg, setCodeErrorMsg] = useState('');
+  const [codeErrorMsg, setCodeErrorMsg] = useState("");
   const [appliedCoupons, setAppliedCoupons] = useState([]);
   const [billingDetails, setBillingDetails] = useState({
-    name: '',
+    firstName: "",
+    lastName: "",
     address: {
-      line1: '',
-      postal_code: ''
-    }
+      line1: "",
+      postal_code: "",
+    },
   });
   const [displayBillingDetailsErr, setDisplayBillingDetailsErr] = useState(
     false
   );
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvc, setCvc] = useState('');
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvc, setCvc] = useState("");
   const [isValidCard, setIsValidCard] = useState(false);
   const [cardErr, setCardErr] = useState(false);
   const cardInputref = useRef();
+  const captchaRef = useRef();
+  const [captchaString, setCaptchaString] = useState("");
+  const dispatch = useDispatch();
 
   useImperativeHandle(ref, () => {
-    return {handlePayCheckOut: handlePayCheckOut};
+    return { handlePayCheckOut: handlePayCheckOut };
   });
 
   useEffect(() => {
@@ -66,10 +72,10 @@ const CheckoutForm = forwardRef((props, ref) => {
   }, [props.amount]);
 
   useEffect(() => {
-    if (props.type !== 'cart') {
+    if (props.type !== "cart") {
       const totalDiscount = appliedCoupons.reduce(
-        (accumulator, {type, value}) =>
-          type === 'percentage'
+        (accumulator, { type, value }) =>
+          type === "percentage"
             ? accumulator +
               parseFloat(
                 calculatePercentageAmount(
@@ -90,9 +96,9 @@ const CheckoutForm = forwardRef((props, ref) => {
   }, [appliedCoupons]);
 
   const handlePayCheckOut = async () => {
-
     if (
-      !billingDetails.name ||
+      !billingDetails.firstName ||
+      !billingDetails.lastName ||
       !billingDetails.address.line1 ||
       !billingDetails.address.postal_code
     ) {
@@ -109,30 +115,31 @@ const CheckoutForm = forwardRef((props, ref) => {
 
     setCardErr(false);
 
-
     if (!isValidCard) {
       return;
     }
 
-    const c_d = {billingDetails, cardNumber, expiry, cvc};
+    if (!captchaString) {
+      return dispatch(showFailureSnackbar("Verify the captcha"));
+    }
+
+    const c_d = { billingDetails, cardNumber, expiry, cvc };
     props.setPayLoading(true);
     checkout(c_d);
   };
 
-  const checkout = async c_d => {
+  const checkout = async (c_d) => {
     try {
-      const paymentResponse = await ApiUtil.postWithoutToken(
-        'payment/open',
-        {
-          c_d,
-          checkoutData: props.checkoutData,
-          amount: pay,
-          type: props.type,
-          username: props.username,
-          userEmail: props.userEmail,
-        }
-      );
-      console.log(paymentResponse)
+      const paymentResponse = await ApiUtil.postWithoutToken("payment/open", {
+        c_d,
+        checkoutData: props.checkoutData,
+        amount: pay,
+        type: props.type,
+        username: props.username,
+        userEmail: props.userEmail,
+        captchaString,
+      });
+      console.log(paymentResponse);
       props.onSuccess(paymentResponse);
     } catch (err) {
       console.log(err);
@@ -142,13 +149,13 @@ const CheckoutForm = forwardRef((props, ref) => {
 
   const handleApply = async () => {
     const checkIsCouponAlreadyApplied = appliedCoupons.filter(
-      val => val.promoCode === code
+      (val) => val.promoCode === code
     );
-    if (code === '' || checkIsCouponAlreadyApplied.length !== 0) {
+    if (code === "" || checkIsCouponAlreadyApplied.length !== 0) {
       setCodeError(true);
     } else {
       setCodeError(false);
-      setCodeErrorMsg('');
+      setCodeErrorMsg("");
       getDiscountCoupon();
     }
   };
@@ -159,37 +166,37 @@ const CheckoutForm = forwardRef((props, ref) => {
 
   const getDiscountCoupon = () => {
     setCouponLoading(true);
-    ApiUtil.postWithoutToken('discount/apply', {code})
-      .then(res => {
+    ApiUtil.postWithoutToken("discount/apply", { code })
+      .then((res) => {
         setCouponLoading(false);
         validateCoupon(res.data);
         setCodeError(false);
       })
       .catch(() => {
         setCouponLoading(false);
-        setCodeErrorMsg('Invalid Coupon');
+        setCodeErrorMsg("Invalid Coupon");
         setCodeError(true);
       });
   };
 
-  const validateCoupon = data => {
+  const validateCoupon = (data) => {
     const checkIsCouponAlreadyApplied = appliedCoupons.filter(
-      val => val.discountId === data.discountId
+      (val) => val.discountId === data.discountId
     );
 
     if (
       data.category.includes(props.type) &&
       checkIsCouponAlreadyApplied.length === 0
     ) {
-      setCode('');
-      setAppliedCoupons(prevState => [...prevState, data]);
+      setCode("");
+      setAppliedCoupons((prevState) => [...prevState, data]);
     } else {
-      setCodeErrorMsg('Coupon not applicable');
+      setCodeErrorMsg("Coupon not applicable");
     }
   };
 
-  const handleCloseCoupon = index => {
-    setAppliedCoupons(prevState => prevState.filter((val, i) => i !== index));
+  const handleCloseCoupon = (index) => {
+    setAppliedCoupons((prevState) => prevState.filter((val, i) => i !== index));
   };
 
   return (
@@ -205,16 +212,16 @@ const CheckoutForm = forwardRef((props, ref) => {
                 placeholder="Coupon code"
                 fullWidth
                 value={code}
-                onChange={e => {
+                onChange={(e) => {
                   setCode(e.target.value);
                 }}
-                InputLabelProps={{shrink: true}}
+                InputLabelProps={{ shrink: true }}
                 error={codeError}
                 helperText={codeErrorMsg}
                 FormHelperTextProps={{
                   style: {
-                    color: '#EC5269'
-                  }
+                    color: "#EC5269",
+                  },
                 }}
               />
             </Grid>
@@ -223,12 +230,13 @@ const CheckoutForm = forwardRef((props, ref) => {
                 className="apply"
                 variant="primary"
                 disabled={couponLoading}
-                onClick={() => handleApply()}>
+                onClick={() => handleApply()}
+              >
                 Apply
                 {couponLoading && (
                   <CircularProgress
                     size="1rem"
-                    style={{marginLeft: 5, color: 'white'}}
+                    style={{ marginLeft: 5, color: "white" }}
                   />
                 )}
               </Button>
@@ -241,7 +249,8 @@ const CheckoutForm = forwardRef((props, ref) => {
                 container
                 direction="row"
                 justify="center"
-                alignItems="center">
+                alignItems="center"
+              >
                 <Grid item xs={9}>
                   Total Amount
                 </Grid>
@@ -256,12 +265,13 @@ const CheckoutForm = forwardRef((props, ref) => {
               {appliedCoupons.map((coupon, index) => {
                 return (
                   <Grid
-                    style={{marginTop: 5}}
+                    style={{ marginTop: 5 }}
                     key={index}
                     container
                     direction="row"
                     justify="center"
-                    alignItems="center">
+                    alignItems="center"
+                  >
                     <Grid item xs={9}>
                       {`Discount applied(${coupon.promoCode})`}
                       <CloseIcon
@@ -270,9 +280,9 @@ const CheckoutForm = forwardRef((props, ref) => {
                         }}
                         style={{
                           marginLeft: 2,
-                          cursor: 'pointer',
-                          fontSize: '15px',
-                          color: '#EC5269'
+                          cursor: "pointer",
+                          fontSize: "15px",
+                          color: "#EC5269",
                         }}
                       />
                     </Grid>
@@ -280,7 +290,7 @@ const CheckoutForm = forwardRef((props, ref) => {
                     <Grid item xs={3}>
                       <Box display="flex" justifyContent="center">
                         - $
-                        {coupon.type === 'percentage'
+                        {coupon.type === "percentage"
                           ? calculatePercentageAmount(
                               props.amount,
                               coupon.value
@@ -297,7 +307,8 @@ const CheckoutForm = forwardRef((props, ref) => {
                   container
                   direction="row"
                   justify="center"
-                  alignItems="center">
+                  alignItems="center"
+                >
                   <Grid item xs={9}>
                     To Pay
                   </Grid>
@@ -314,16 +325,29 @@ const CheckoutForm = forwardRef((props, ref) => {
         </>
       )}
       <TextField
-        label="Card Holder Name"
-        name="name"
+        label="First Name"
+        name="firstName"
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
-        InputLabelProps={{shrink: true}}
-        value={billingDetails.name}
-        error={displayBillingDetailsErr && !billingDetails.name}
-        onChange={e => {
-          setBillingDetails({...billingDetails, name: e.target.value});
+        style={{ marginTop: 15, marginBottom: 15 }}
+        InputLabelProps={{ shrink: true }}
+        value={billingDetails.firstName}
+        error={displayBillingDetailsErr && !billingDetails.firstName}
+        onChange={(e) => {
+          setBillingDetails({ ...billingDetails, firstName: e.target.value });
+        }}
+      />
+      <TextField
+        label="Last Name"
+        name="lastName"
+        required
+        fullWidth
+        style={{ marginTop: 15, marginBottom: 15 }}
+        InputLabelProps={{ shrink: true }}
+        value={billingDetails.lastName}
+        error={displayBillingDetailsErr && !billingDetails.lastName}
+        onChange={(e) => {
+          setBillingDetails({ ...billingDetails, lastName: e.target.value });
         }}
       />
       <TextField
@@ -331,16 +355,16 @@ const CheckoutForm = forwardRef((props, ref) => {
         name="line1"
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
-        InputLabelProps={{shrink: true}}
+        style={{ marginTop: 15, marginBottom: 15 }}
+        InputLabelProps={{ shrink: true }}
         error={displayBillingDetailsErr && !billingDetails.address.line1}
-        onChange={e => {
+        onChange={(e) => {
           setBillingDetails({
             ...billingDetails,
             address: {
               ...billingDetails.address,
-              line1: e.target.value
-            }
+              line1: e.target.value,
+            },
           });
         }}
       />
@@ -350,59 +374,79 @@ const CheckoutForm = forwardRef((props, ref) => {
         error={displayBillingDetailsErr && !billingDetails.address.postal_code}
         required
         fullWidth
-        style={{marginTop: 15, marginBottom: 15}}
-        InputLabelProps={{shrink: true}}
-        onChange={e => {
+        style={{ marginTop: 15, marginBottom: 15 }}
+        InputLabelProps={{ shrink: true }}
+        onChange={(e) => {
           setBillingDetails({
             ...billingDetails,
             address: {
               ...billingDetails.address,
-              postal_code: e.target.value
-            }
+              postal_code: e.target.value,
+            },
           });
         }}
       />
-      <Typography style={{color: '#00000099', fontSize: 13, marginTop: 15}}>
+      <Typography style={{ color: "#00000099", fontSize: 13, marginTop: 15 }}>
         Card Number / Expiry / CVV *
       </Typography>
       <CreditCardInput
         ref={cardInputref}
-        onValidityStatusChange={status => {
+        onValidityStatusChange={(status) => {
           setIsValidCard(status);
         }}
         cardNumberInputProps={{
           value: cardNumber,
-          onChange: e => setCardNumber(e.target.value)
+          onChange: (e) => setCardNumber(e.target.value),
         }}
         cardExpiryInputProps={{
           value: expiry,
-          onChange: e => setExpiry(e.target.value)
+          onChange: (e) => setExpiry(e.target.value),
         }}
         cardCVCInputProps={{
           value: cvc,
-          onChange: e => setCvc(e.target.value)
+          onChange: (e) => setCvc(e.target.value),
         }}
         containerStyle={{
-          width: '100%',
-          padding: '6px 0 7px',
-          marginBottom: 15
+          width: "100%",
+          padding: "6px 0 7px",
+          marginBottom: 15,
         }}
         fieldStyle={{
-          width: '100%',
+          width: "100%",
           border: 0,
           outline: 0,
-          borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
-          borderRadius: 0
+          borderBottom: "1px solid rgba(0, 0, 0, 0.42)",
+          borderRadius: 0,
         }}
         invalidStyle={{
-          width: '100%',
+          width: "100%",
           border: 0,
           outline: 0,
-          borderBottom: '2px solid red'
+          borderBottom: "2px solid red",
         }}
-        inputStyle={{paddingTop: 10}}
+        inputStyle={{ paddingTop: 10 }}
         fieldClassName="input"
       />
+
+      <div style={{ marginBottom: 10 }}>
+        <ReCAPTCHA
+          ref={captchaRef}
+          // size="invisible"
+          sitekey={process.env.REACT_APP_RECAPTCHA_SITEKEY}
+          onErrored={() => {
+            console.log("on onErrored");
+            setCaptchaString("");
+          }}
+          onExpired={() => {
+            console.log("on expired");
+            setCaptchaString("");
+          }}
+          onChange={(captcha) => {
+            setCaptchaString(captcha);
+            console.log("on change", captcha);
+          }}
+        />
+      </div>
     </form>
   );
 });
@@ -420,17 +464,17 @@ CheckoutForm.propTypes = {
   onFailure: PropTypes.function,
   setToPay: PropTypes.function,
   appliedCoupons: PropTypes.array,
-  setPayLoading: PropTypes.function
+  setPayLoading: PropTypes.function,
 };
 
 CheckoutForm.defaultProps = {
   amount: 0,
-  type: '',
+  type: "",
   checkoutData: {},
   showCouponCode: false,
   onSuccess: () => {},
   onFailure: () => {},
   setToPay: () => {},
   appliedCoupons: [],
-  setPayLoading: () => {}
+  setPayLoading: () => {},
 };

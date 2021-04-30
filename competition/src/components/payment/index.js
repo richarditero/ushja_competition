@@ -1,12 +1,12 @@
-import React, {useState, useRef} from 'react';
-import './Checkout.css';
-import CheckoutForm from './CheckoutForm';
+import React, { useState, useRef } from "react";
+import "./Checkout.css";
+import CheckoutForm from "./CheckoutForm";
 
-import PropTypes from 'prop-types';
-import PayButton from '../shared/hoc/PayButton';
-import {useHistory} from 'react-router-dom';
+import PropTypes from "prop-types";
+import PayButton from "../shared/hoc/PayButton";
+import { useHistory } from "react-router-dom";
 
-function Checkout({location, componetProps}) {
+function Checkout({ location, componetProps }) {
   const PaymentSummary = componetProps; // payment summary component
 
   const paymentRef = useRef();
@@ -21,22 +21,22 @@ function Checkout({location, componetProps}) {
 
   const onSuccess = () => {
     setLoading(false);
-    console.log('onSuccess');
+    console.log("onSuccess");
     return history.replace({
-      pathname: '/completed',
+      pathname: "/completed",
       state: {
-        type: 'success'
-      }
+        type: "success",
+      },
     });
   };
 
   const onFailure = () => {
     setLoading(false);
     history.push({
-      pathname: '/completed',
+      pathname: "/completed",
       state: {
-        type: 'failure'
-      }
+        type: "failure",
+      },
     });
   };
 
@@ -61,7 +61,7 @@ function Checkout({location, componetProps}) {
               onFailure={onFailure}
               setPayLoading={setLoading}
             />
-            <div style={{textAlign: 'center'}}>
+            <div style={{ textAlign: "center" }}>
               <PayButton
                 handlePayAmount={onPayClick}
                 amount={location?.state?.amount}
@@ -77,7 +77,7 @@ function Checkout({location, componetProps}) {
 
 Checkout.propTypes = {
   location: PropTypes.object,
-  componetProps: PropTypes.elementType
+  componetProps: PropTypes.elementType,
 };
 
 export default Checkout;

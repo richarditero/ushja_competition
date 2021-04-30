@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
-import {useDispatch} from 'react-redux';
-import strings from '../../../i18n/Strings';
-import {ApiUtil} from '../../../util/ApiUtil';
-import {showFailureSnackbar} from '../../../store/action/snackbarAction';
+import React, { useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
+import strings from "../../../i18n/Strings";
+import { ApiUtil } from "../../../util/ApiUtil";
+import { showFailureSnackbar } from "../../../store/action/snackbarAction";
 import {
   Grid,
   Paper,
@@ -15,38 +15,43 @@ import {
   Divider,
   Button,
   CircularProgress,
-  Box
-} from '@material-ui/core';
-import DateFnsUtils from '@date-io/date-fns';
+  Box,
+} from "@material-ui/core";
+import DateFnsUtils from "@date-io/date-fns";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from '@material-ui/pickers';
-import './CompetitionForm.css';
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+import "./CompetitionForm.css";
 import Footer from "../../layout/footer";
+import CloseIcon from "@material-ui/icons/Close";
+
+function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
+}
 
 const useStyles = makeStyles({
   gridDataText: {
-    color: '#7c7c7c',
+    color: "#7c7c7c",
     fontWeight: 600,
-    margin: 1
+    margin: 1,
   },
   gridHeadDataText: {
     fontWeight: 600,
-    margin: 1
+    margin: 1,
   },
   buttonStyle: {
-    background: '#EC5269',
-    color: 'white',
-    textTransform: 'none',
+    background: "#EC5269",
+    color: "white",
+    textTransform: "none",
     borderRadius: 10,
     width: 160,
-    margin: '1%'
+    margin: "1%",
   },
   headerText: {
-    color: '#7c7c7c',
-    fontWeight: '600'
-  }
+    color: "#7c7c7c",
+    fontWeight: "600",
+  },
 });
 
 function CompetitionEvents(props) {
@@ -54,19 +59,19 @@ function CompetitionEvents(props) {
   const [competitionEvents, setCompetitionEvents] = useState([]);
   const [total, setTotal] = useState(0);
   const [formData, setFormData] = useState({
-    competitionName: '',
-    competitionId: '',
-    competitionLocation: '',
-    competitionDate: '',
-    uploaded_document: '',
-    uploaded_document_name: '',
-    uploaded_document_mimeType: ''
+    competitionName: "",
+    competitionId: "",
+    competitionLocation: "",
+    competitionDate: null,
+    uploaded_document: "",
+    uploaded_document_name: "",
+    uploaded_document_mimeType: "",
   });
 
   const [uploadedDocument, setUploadedDocument] = useState({
-    fileName: '',
-    data: '',
-    mimeType: ''
+    fileName: "",
+    data: "",
+    mimeType: "",
   });
   const [loader, setLoader] = useState(false);
   const hiddenFileInput = React.useRef(null);
@@ -80,30 +85,30 @@ function CompetitionEvents(props) {
 
     if (competitionId) {
       ApiUtil.getWithOutToken(`competition/events/${competitionId}`)
-        .then(result => {
-          const events = result.data.map(value => ({
+        .then((result) => {
+          const events = result.data.map((value) => ({
             ...value,
             isChecked: false,
-            quantity: 0
+            quantity: 0,
           }));
           setCompetitionEvents(events);
           setLoader(false);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           setLoader(false);
         });
     }
   }, []);
 
-  const onCheckboxChange = competitionEvent => {
-    setCompetitionEvents(state =>
-      state.map(value => {
+  const onCheckboxChange = (competitionEvent) => {
+    setCompetitionEvents((state) =>
+      state.map((value) => {
         if (competitionEvent.competitionEventId === value.competitionEventId) {
           return {
             ...value,
             isChecked: !value.isChecked,
-            quantity: value.quantity > 0 ? value.quantity : 0
+            quantity: value.quantity > 0 ? value.quantity : 0,
           };
         }
         return value;
@@ -113,55 +118,64 @@ function CompetitionEvents(props) {
 
   const handleQunatityInputChange = (competitionEvent, inputValue) => {
     inputValue = parseFloat(inputValue);
-    setCompetitionEvents(state =>
-      state.map(value => {
+    setCompetitionEvents((state) =>
+      state.map((value) => {
         if (competitionEvent.competitionEventId === value.competitionEventId) {
-          return {...value, quantity: inputValue >= 0 ? inputValue : 0};
+          return { ...value, quantity: inputValue >= 0 ? inputValue : 0 };
         }
         return value;
       })
     );
   };
 
-  const handleFormInputChange = event => {
+  const handleFormInputChange = (event) => {
     const target = event.target;
     const name = target.name;
     const value = target.value;
 
-    setFormData(state => ({
+    setFormData((state) => ({
       ...state,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleClick = () => {
+  const handleFileUploadClick = () => {
     hiddenFileInput.current.click();
   };
 
-  const handleChange = event => {
+  const handleFileRemoveClick = () => {
+    console.log("im called");
+    setUploadedDocument({
+      fileName: "",
+      data: "",
+      mimeType: "",
+    });
+  };
+
+  const handleChange = (event) => {
     let selectedFile = event.target.files;
     let file = null;
-    let fileName = '';
+    let fileName = "";
     //Check File is not Empty
     if (selectedFile.length > 0) {
       // Select the very first file from list
       let fileToLoad = selectedFile[0];
       fileName = fileToLoad.name;
-      let type = fileToLoad.name.split('.')[
-        fileToLoad.name.split('.').length - 1
+      let type = fileToLoad.name.split(".")[
+        fileToLoad.name.split(".").length - 1
       ];
-      const extensions = ['pdf', 'doc', 'docx', 'pdf', 'xls', 'xlsx', '.txt'];
+      const extensions = ["pdf", "doc", "docx", "pdf", "xls", "xlsx", ".txt"];
 
       //Check select file
       if (type && extensions.includes(type)) {
         let fileReader = new FileReader();
-        fileReader.onload = function(fileLoadedEvent) {
+        fileReader.onload = function (fileLoadedEvent) {
           file = fileLoadedEvent.target.result;
-          let base64_data = file.split(',')[1];
+          let base64_data = file.split(",")[1];
           let pdfFile = {
             fileName: fileName,
             data: base64_data,
-            mimeType: fileToLoad.type
+            mimeType: fileToLoad.type,
           };
           setUploadedDocument(pdfFile);
         };
@@ -178,7 +192,7 @@ function CompetitionEvents(props) {
   useEffect(() => {
     const findTotal = () => {
       const totalPrice = competitionEvents.reduce(
-        (accumulator, {quantity, price, isChecked}) =>
+        (accumulator, { quantity, price, isChecked }) =>
           isChecked ? accumulator + quantity * price : accumulator,
         0
       );
@@ -189,23 +203,19 @@ function CompetitionEvents(props) {
   }, [competitionEvents]);
 
   const onSubmit = () => {
-
     const summary = competitionEvents
-      .map(({competitionEventId, quantity,name,price, isChecked}) => {
-        if ( isChecked) return {competitionEventId, quantity,name,price};
+      .map(({ competitionEventId, quantity, name, price, isChecked }) => {
+        if (isChecked) return { competitionEventId, quantity, name, price };
       })
-      .filter(val => {
+      .filter((val) => {
         if (val) {
           return val;
         }
       });
 
-      const quantityCheck = competitionEvents
-      .filter((val) => {
-        if (val.quantity < 1 && val.isChecked) return val;
-      });
-      
-
+    const quantityCheck = competitionEvents.filter((val) => {
+      if (val.quantity < 1 && val.isChecked) return val;
+    });
 
     if (summary.length < 1) {
       return dispatch(
@@ -213,10 +223,8 @@ function CompetitionEvents(props) {
       );
     }
 
-    if (quantityCheck.length !==0) {
-      return dispatch(
-        showFailureSnackbar('Input valid number of horses')
-      );
+    if (quantityCheck.length !== 0) {
+      return dispatch(showFailureSnackbar("Input valid number of horses"));
     }
 
     if (!formData.competitionName) {
@@ -232,6 +240,11 @@ function CompetitionEvents(props) {
         showFailureSnackbar(strings.displayText.enterTheCompetitionDate)
       );
     }
+    else if (!isValidDate(formData.competitionDate)) {
+      return dispatch(
+        showFailureSnackbar('Enter valid competition date')
+      );
+    }
 
     let checkoutData = {};
     checkoutData.items = summary;
@@ -243,14 +256,14 @@ function CompetitionEvents(props) {
       uploadedDocument.mimeType;
 
     props.history.push({
-      pathname: '/checkout',
+      pathname: "/checkout",
       state: {
         checkoutData: checkoutData,
         amount: total,
-        type: 'openCompetition',
+        type: "openCompetition",
         username: props.location.state.username,
-        email: props.location.state.email
-      }
+        email: props.location.state.email,
+      },
     });
   };
 
@@ -267,7 +280,7 @@ function CompetitionEvents(props) {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Typography className={classes.headerText}>
-              Please fill in your competition details.
+                Please fill in your competition details.
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -301,31 +314,45 @@ function CompetitionEvents(props) {
             </Grid>
             <Grid item xs={12} md={6}>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
+       {/*          <KeyboardDatePicker
+                  margin="normal"
+                  id="date-picker-dialog"
+                  label="Date picker dialog"
+                  format="MM/dd/yyyy"
+                  error={false}
+                  value={null}
+                  onChange={(e) => {
+                    console.log(e);
+                  }}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                /> */}
+            <KeyboardDatePicker
                   disableToolbar
                   animateYearScrolling
-                  style={{margin: 0}}
+                  style={{ margin: 0 }}
                   margin="normal"
                   id="date-picker-dialog"
                   label="Competition Date (MM/DD/YYYY)"
                   format="MM/dd/yyyy"
                   value={formData.competitionDate}
-                  helperText={''}
+                  helperText={""}
                   fullWidth
                   required
                   error={false}
-                  onChange={val => {
+                  onChange={(val) => {
                     console.log(val);
-                    setFormData(state => ({
+                    setFormData((state) => ({
                       ...state,
-                      competitionDate: val
+                      competitionDate: val,
                     }));
                     // setInputValue(val);
                   }}
-                  InputLabelProps={{
-                    shrink: formData.competitionDate ? true : false
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date',
                   }}
-                />
+                />  
               </MuiPickersUtilsProvider>
               {/*           <TextField
                 label="Competition Date"
@@ -347,12 +374,13 @@ function CompetitionEvents(props) {
             </Grid>
             <Grid item xs={12}>
               <Paper elevation={3} square>
-                {competitionEvents.map(competitionEvent => {
+                {competitionEvents.map((competitionEvent) => {
                   return (
-                    <>
+                    <div key={competitionEvent.name}>
                       <Grid
                         container
-                        style={{paddingLeft: 10, paddingRight: 10}}>
+                        style={{ paddingLeft: 10, paddingRight: 10 }}
+                      >
                         <Grid item xs={10}>
                           <Grid container>
                             <Grid item xs={12}>
@@ -365,7 +393,7 @@ function CompetitionEvents(props) {
                                       onCheckboxChange(competitionEvent);
                                     }}
                                     style={{
-                                      color: '#0073e4'
+                                      color: "#0073e4",
                                     }}
                                   />
                                 }
@@ -377,18 +405,18 @@ function CompetitionEvents(props) {
                               />
                             </Grid>
                             <Grid item xs={12}>
-                              <Typography style={{paddingLeft: 30}}>
+                              <Typography style={{ paddingLeft: 30 }}>
                                 {competitionEvent.description}
                               </Typography>
                             </Grid>
                             <Grid item xs={12}>
                               <FormControlLabel
-                                style={{paddingLeft: 30}}
+                                style={{ paddingLeft: 30 }}
                                 control={
                                   <Checkbox
                                     color="primary"
                                     style={{
-                                      color: '#0073e4'
+                                      color: "#0073e4",
                                     }}
                                   />
                                 }
@@ -405,7 +433,8 @@ function CompetitionEvents(props) {
                           item
                           xs={1}
                           justify="center"
-                          alignItems="flex-end">
+                          alignItems="flex-end"
+                        >
                           <TextField
                             type="number"
                             disabled={!competitionEvent.isChecked}
@@ -413,7 +442,7 @@ function CompetitionEvents(props) {
                               competitionEvent.isChecked &&
                               competitionEvent.quantity
                             }
-                            onChange={e => {
+                            onChange={(e) => {
                               handleQunatityInputChange(
                                 competitionEvent,
                                 e.target.value
@@ -421,10 +450,10 @@ function CompetitionEvents(props) {
                             }}
                           />
                         </Grid>
-                        <Grid item xs={1} style={{textAlign: 'center'}}>
+                        <Grid item xs={1} style={{ textAlign: "center" }}>
                           <Typography>
                             {competitionEvent.isChecked &&
-                              '$' +
+                              "$" +
                                 parseFloat(
                                   competitionEvent.quantity
                                     ? competitionEvent.quantity
@@ -434,8 +463,8 @@ function CompetitionEvents(props) {
                           </Typography>
                         </Grid>
                       </Grid>
-                      <Divider style={{marginLeft: 30, marginRight: 30}} />
-                    </>
+                      <Divider style={{ marginLeft: 30, marginRight: 30 }} />
+                    </div>
                   );
                 })}
               </Paper>
@@ -449,11 +478,25 @@ function CompetitionEvents(props) {
               <div>
                 <div className="pdfName-container">
                   <p className={classes.headerText}>
-                  Upload Results and/or Declarations :{' '}
+                    Upload Results and/or Declarations :{" "}
                   </p>
                   <p className="pdf-name">{uploadedDocument.fileName}</p>
+                  {uploadedDocument.fileName && (
+                    <div onClick={handleFileRemoveClick}>
+                      <CloseIcon
+                        style={{
+                          color: "#EC5269",
+                          cursor: "pointer",
+                          marginLeft: 15,
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className="select-container" onClick={handleClick}>
+                <div
+                  className="select-container"
+                  onClick={handleFileUploadClick}
+                >
                   Select Your File Here
                 </div>
 
@@ -471,7 +514,8 @@ function CompetitionEvents(props) {
                 variant="contained"
                 color="primary"
                 className={classes.buttonStyle}
-                onClick={e => handleGoBack()}>
+                onClick={(e) => handleGoBack()}
+              >
                 Go Back
               </Button>
               {/* <Button
@@ -485,7 +529,8 @@ function CompetitionEvents(props) {
                 variant="contained"
                 color="primary"
                 className={classes.buttonStyle}
-                onClick={onSubmit}>
+                onClick={onSubmit}
+              >
                 Pay
               </Button>
             </Grid>
@@ -494,7 +539,7 @@ function CompetitionEvents(props) {
         <Grid item xs={1} />
       </Grid>
       <Box mt={2}>
-        <Footer/>
+        <Footer />
       </Box>
     </Box>
   );
@@ -502,7 +547,7 @@ function CompetitionEvents(props) {
 
 CompetitionEvents.propTypes = {
   history: PropTypes.object,
-  location: PropTypes.object
+  location: PropTypes.object,
 };
 
 export default CompetitionEvents;

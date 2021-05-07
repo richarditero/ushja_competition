@@ -8,6 +8,7 @@ import React, {
 
 import CreditCardInput from "./CardElement";
 import ReCAPTCHA from "react-google-recaptcha";
+import withWidth from "@material-ui/core/withWidth";
 
 import {
   TextField,
@@ -205,7 +206,7 @@ const CheckoutForm = forwardRef((props, ref) => {
       {props.showCouponCode && (
         <>
           <Grid container direction="row" justify="center" alignItems="center">
-            <Grid item xs={10}>
+            <Grid item xs={12} sm={10}>
               <TextField
                 label="Coupon code"
                 name="couponCode"
@@ -324,112 +325,115 @@ const CheckoutForm = forwardRef((props, ref) => {
           )}
         </>
       )}
-      <TextField
-        label="First Name"
-        name="firstName"
-        required
-        fullWidth
-        style={{ marginTop: 15, marginBottom: 15 }}
-        InputLabelProps={{ shrink: true }}
-        value={billingDetails.firstName}
-        error={displayBillingDetailsErr && !billingDetails.firstName}
-        onChange={(e) => {
-          setBillingDetails({ ...billingDetails, firstName: e.target.value });
-        }}
-      />
-      <TextField
-        label="Last Name"
-        name="lastName"
-        required
-        fullWidth
-        style={{ marginTop: 15, marginBottom: 15 }}
-        InputLabelProps={{ shrink: true }}
-        value={billingDetails.lastName}
-        error={displayBillingDetailsErr && !billingDetails.lastName}
-        onChange={(e) => {
-          setBillingDetails({ ...billingDetails, lastName: e.target.value });
-        }}
-      />
-      <TextField
-        label="Address"
-        name="line1"
-        required
-        fullWidth
-        style={{ marginTop: 15, marginBottom: 15 }}
-        InputLabelProps={{ shrink: true }}
-        error={displayBillingDetailsErr && !billingDetails.address.line1}
-        onChange={(e) => {
-          setBillingDetails({
-            ...billingDetails,
-            address: {
-              ...billingDetails.address,
-              line1: e.target.value,
-            },
-          });
-        }}
-      />
-      <TextField
-        label="Postal Code"
-        name="postal_code"
-        error={displayBillingDetailsErr && !billingDetails.address.postal_code}
-        required
-        fullWidth
-        style={{ marginTop: 15, marginBottom: 15 }}
-        InputLabelProps={{ shrink: true }}
-        onChange={(e) => {
-          setBillingDetails({
-            ...billingDetails,
-            address: {
-              ...billingDetails.address,
-              postal_code: e.target.value,
-            },
-          });
-        }}
-      />
-      <Typography style={{ color: "#00000099", fontSize: 13, marginTop: 15 }}>
-        Card Number / Expiry / CVV *
-      </Typography>
-      <CreditCardInput
-        ref={cardInputref}
-        onValidityStatusChange={(status) => {
-          setIsValidCard(status);
-        }}
-        cardNumberInputProps={{
-          value: cardNumber,
-          onChange: (e) => setCardNumber(e.target.value),
-        }}
-        cardExpiryInputProps={{
-          value: expiry,
-          onChange: (e) => setExpiry(e.target.value),
-        }}
-        cardCVCInputProps={{
-          value: cvc,
-          onChange: (e) => setCvc(e.target.value),
-        }}
-        containerStyle={{
-          width: "100%",
-          padding: "6px 0 7px",
-          marginBottom: 15,
-        }}
-        fieldStyle={{
-          width: "100%",
-          border: 0,
-          outline: 0,
-          borderBottom: "1px solid rgba(0, 0, 0, 0.42)",
-          borderRadius: 0,
-        }}
-        invalidStyle={{
-          width: "100%",
-          border: 0,
-          outline: 0,
-          borderBottom: "2px solid red",
-        }}
-        inputStyle={{ paddingTop: 10 }}
-        fieldClassName="input"
-      />
+      <Grid item xs={12} sm={10}>
+        <TextField
+          label="First Name"
+          name="firstName"
+          required
+          fullWidth
+          style={{ marginTop: 15, marginBottom: 15 }}
+          InputLabelProps={{ shrink: true }}
+          value={billingDetails.firstName}
+          error={displayBillingDetailsErr && !billingDetails.firstName}
+          onChange={(e) => {
+            setBillingDetails({ ...billingDetails, firstName: e.target.value });
+          }}
+        />
+        <TextField
+          label="Last Name"
+          name="lastName"
+          required
+          fullWidth
+          style={{ marginTop: 15, marginBottom: 15 }}
+          InputLabelProps={{ shrink: true }}
+          value={billingDetails.lastName}
+          error={displayBillingDetailsErr && !billingDetails.lastName}
+          onChange={(e) => {
+            setBillingDetails({ ...billingDetails, lastName: e.target.value });
+          }}
+        />
+        <TextField
+          label="Address"
+          name="line1"
+          required
+          fullWidth
+          style={{ marginTop: 15, marginBottom: 15 }}
+          InputLabelProps={{ shrink: true }}
+          error={displayBillingDetailsErr && !billingDetails.address.line1}
+          onChange={(e) => {
+            setBillingDetails({
+              ...billingDetails,
+              address: {
+                ...billingDetails.address,
+                line1: e.target.value,
+              },
+            });
+          }}
+        />
+        <TextField
+          label="Postal Code"
+          name="postal_code"
+          error={
+            displayBillingDetailsErr && !billingDetails.address.postal_code
+          }
+          required
+          fullWidth
+          style={{ marginTop: 15, marginBottom: 15 }}
+          InputLabelProps={{ shrink: true }}
+          onChange={(e) => {
+            setBillingDetails({
+              ...billingDetails,
+              address: {
+                ...billingDetails.address,
+                postal_code: e.target.value,
+              },
+            });
+          }}
+        />
+        <Typography style={{ color: "#00000099", fontSize: 13, marginTop: 15 }}>
+          Card Number / Expiry / CVV *
+        </Typography>
+        <CreditCardInput
+          ref={cardInputref}
+          onValidityStatusChange={(status) => {
+            setIsValidCard(status);
+          }}
+          cardNumberInputProps={{
+            value: cardNumber,
+            onChange: (e) => setCardNumber(e.target.value),
+          }}
+          cardExpiryInputProps={{
+            value: expiry,
+            onChange: (e) => setExpiry(e.target.value),
+          }}
+          cardCVCInputProps={{
+            value: cvc,
+            onChange: (e) => setCvc(e.target.value),
+          }}
+          containerStyle={{
+            width: "100%",
+            padding: "6px 0 7px",
+            marginBottom: 15,
+          }}
+          fieldStyle={{
+            width: "100%",
+            border: 0,
+            outline: 0,
+            borderBottom: "1px solid rgba(0, 0, 0, 0.42)",
+            borderRadius: 0,
+          }}
+          invalidStyle={{
+            width: "100%",
+            border: 0,
+            outline: 0,
+            borderBottom: "2px solid red",
+          }}
+          inputStyle={{ paddingTop: 10 }}
+          fieldClassName="input"
+        />
 
-      <div style={{ marginBottom: 10 }}>
         <ReCAPTCHA
+        // /  size={props.width === "xs" ? "compact" : "normal"}
           ref={captchaRef}
           // size="invisible"
           sitekey={process.env.REACT_APP_RECAPTCHA_SITEKEY}
@@ -446,12 +450,12 @@ const CheckoutForm = forwardRef((props, ref) => {
             console.log("on change", captcha);
           }}
         />
-      </div>
+      </Grid>
     </form>
   );
 });
 
-export default CheckoutForm;
+export default withWidth()(CheckoutForm);
 
 CheckoutForm.propTypes = {
   stripe: PropTypes.any,

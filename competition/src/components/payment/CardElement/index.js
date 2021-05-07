@@ -60,7 +60,7 @@ const InputWrapper = styled.label`
     border: 0px;
     position: absolute;
     width: 100%;
-    font-size: 1em;
+    font-size: 0.8em;
     ${({inputStyled}) => ({...inputStyled})};
 
     &:focus {

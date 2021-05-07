@@ -139,3 +139,40 @@
   right: 0;
   margin: auto;
 }
+
+
+
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.content {
+  flex: 1 0 auto;
+  padding: 10px;
+}
+
+.footer_container {
+  flex-shrink: 0;
+  text-align: center;
+  background-color: tomato;
+  color: white;
+}
+
+.form_group_recaptcha > div > div {
+  display: flex;
+  place-content: center;
+}
+

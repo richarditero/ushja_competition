@@ -59,7 +59,7 @@ function Thankyou(props) {
             justify="center"
             alignItems="center"
           >
-            <Grid item xs={4}>
+            <Grid item sm={4} xs={12}>
               <Button
                 variant="contained"
                 color="primary"
@@ -73,7 +73,7 @@ function Thankyou(props) {
                 Submit Another Post Competition Report
               </Button>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item sm={4} xs={12}>
               <Button
                 href="https://www.ushja.org/"
                 variant="contained"

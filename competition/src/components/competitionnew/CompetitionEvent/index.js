@@ -23,8 +23,8 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import "./CompetitionForm.css";
-import Footer from "../../layout/footer";
 import CloseIcon from "@material-ui/icons/Close";
+import withWidth from '@material-ui/core/withWidth';
 
 function isValidDate(d) {
   return d instanceof Date && !isNaN(d);
@@ -276,7 +276,7 @@ function CompetitionEvents(props) {
       <Grid container>
         {loader && <CircularProgress className="spinner-style" />}
         <Grid item xs={1} />
-        <Grid item xs={10}>
+        <Grid item xs={props.width === 'xs' ?12 : 10}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Typography className={classes.headerText}>
@@ -518,13 +518,7 @@ function CompetitionEvents(props) {
               >
                 Go Back
               </Button>
-              {/* <Button
-                variant="contained"
-                color="primary"
-                className={classes.buttonStyle}
-                onClick={onSubmit}>
-                Add to cart
-              </Button> */}
+ 
               <Button
                 variant="contained"
                 color="primary"
@@ -538,9 +532,6 @@ function CompetitionEvents(props) {
         </Grid>
         <Grid item xs={1} />
       </Grid>
-      <Box mt={2}>
-        <Footer />
-      </Box>
     </Box>
   );
 }
@@ -550,4 +541,6 @@ CompetitionEvents.propTypes = {
   location: PropTypes.object,
 };
 
-export default CompetitionEvents;
+
+
+export default withWidth()(CompetitionEvents);

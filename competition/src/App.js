@@ -1,22 +1,26 @@
-import React from 'react';
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import FooterLayout from "./components/layout/footer";
 
+import NotAuthenticatedRoutes from "./NotAuthenticatedRoutes";
 
-import NotAuthenticatedRoutes from './NotAuthenticatedRoutes';
+const Footer = () => (
+  <footer className="footer_container">
+    <FooterLayout />
+  </footer>
+);
 
 function App() {
-
-    return <NotAuthenticatedRoutes />;
-  
-
-/*   return (
-    <ThemeProvider theme={theme}>
-      <Container fluid className="nopad">
-        <Layout />
-      </Container>
-    </ThemeProvider>
-  ); */
+  return (
+    <div className="content">
+      <NotAuthenticatedRoutes />
+    </div>
+  );
 }
 
-export default App;
+const AppContainer = () => {
+  return [<App key="1"/>, <Footer key="2"/>];
+};
+
+export default AppContainer;

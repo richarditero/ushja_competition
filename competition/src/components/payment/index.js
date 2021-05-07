@@ -61,7 +61,7 @@ function Checkout({ location, componetProps }) {
               onFailure={onFailure}
               setPayLoading={setLoading}
             />
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center" ,marginTop:20}}>
               <PayButton
                 handlePayAmount={onPayClick}
                 amount={location?.state?.amount}

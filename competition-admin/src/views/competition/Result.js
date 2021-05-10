@@ -20,7 +20,18 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import ApiUtil from "../../util/ApiUtil";
 import Row from "./RowGrid";
 import { useDispatch } from "react-redux";
-import { showSuccessSnackbar } from "../../store/action/snackbarAction";
+import {
+  showSuccessSnackbar,
+  showFailureSnackbar,
+} from "../../store/action/snackbarAction";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@material-ui/core";
 
 const useToolbarStyles = makeStyles((theme) => ({
   root: {
@@ -115,6 +126,8 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
   const [total, setTotal] = useState(0);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState("");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -165,7 +178,7 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
       name: "Card type",
     },
     {
-      name: "Download",
+      name: "Uploaded File",
     },
     {
       name: "Download Invoice",
@@ -209,8 +222,69 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
       .catch((err) => console.log(err));
   };
 
+  const deleteUploadedFile = ({ openCompetitionPaymentId }) => {
+    setIsAlertOpen(true);
+    setFileToDelete(openCompetitionPaymentId);
+  };
+
+  const deleteApi = () => {
+    ApiUtil.deleteWithToken(`open-competition/deleteFile/${fileToDelete}`)
+      .then((result) => {
+        setRows((r) =>
+          r.map((val) => {
+            if (val.openCompetitionPaymentId === fileToDelete) {
+              val.uploadedDocument = null;
+            }
+            return val;
+          })
+        );
+        setFileToDelete("");
+        dispatch(showSuccessSnackbar("Deleted successfully"));
+      })
+      .catch((err) => {
+        setFileToDelete("");
+        dispatch(showFailureSnackbar("Something went wrong"));
+      });
+  };
+
   return (
     <div className={classes.root}>
+      <Dialog
+        open={isAlertOpen}
+        onClose={() => {
+          setIsAlertOpen(false);
+          setFileToDelete("");
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure do you want to delete this file?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setIsAlertOpen(false);
+              setFileToDelete("");
+            }}
+            color="primary"
+          >
+            No
+          </Button>
+          <Button
+            onClick={() => {
+              setIsAlertOpen(false);
+              deleteApi();
+            }}
+            color="secondary"
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar />
         <TableContainer component={Paper}>
@@ -248,7 +322,11 @@ export default function EnhancedTable({ searchquery, handlePageLoder }) {
 
             <TableBody>
               {rows.map((row) => (
-                <Row {...row} resendInvoice={resendInvoice} />
+                <Row
+                  {...row}
+                  resendInvoice={resendInvoice}
+                  deleteUploadedFile={deleteUploadedFile}
+                />
               ))}
             </TableBody>
           </Table>

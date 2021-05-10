@@ -15,6 +15,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import DeleteIcon from "@material-ui/icons/Delete";
 import moment from "moment";
 import SendIcon from "@material-ui/icons/Send";
 import DoneIcon from "@material-ui/icons/Done";
@@ -86,6 +87,8 @@ export default function RowGrid(props) {
               style={{
                 color: props.uploadedDocument ? "black" : "#777777",
                 cursor: "pointer",
+                marginRight: 8,
+                marginTop: 8,
               }}
               onClick={() => {
                 if (props.uploadedDocument) {
@@ -94,6 +97,24 @@ export default function RowGrid(props) {
                   document.body.appendChild(link);
                   link.click();
                   document.body.removeChild(link);
+                }
+              }}
+            />
+          </Tooltip>
+
+          <Tooltip
+            title={
+              props.uploadedDocument ? "Delete this file" : "file not available"
+            }
+          >
+            <DeleteIcon
+              style={{
+                color: props.uploadedDocument ? "black" : "#777777",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                if (props.uploadedDocument) {
+                  props.deleteUploadedFile(props);
                 }
               }}
             />

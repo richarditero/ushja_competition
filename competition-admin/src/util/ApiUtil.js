@@ -64,6 +64,26 @@ const AppUtil = {
       reject({ msg: 'token is not valid' });
     }
   }),
+  deleteWithToken: (uri) => new Promise((resolve, reject) => {
+    const credentials = JSON.parse(localStorage.getItem('credentials'));
+    if (credentials?.AccessToken && credentials?.TokenType) {
+      axios
+        .delete(`${api}/${uri}`, {
+          headers: {
+            'x-access-token': credentials.AccessToken,
+            'x-access-token-type': credentials.TokenType,
+          },
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    } else {
+      reject({ msg: 'token is not valid' });
+    }
+  }),
   postWithToken: (url, data) => new Promise((resolve, reject) => {
     const credentials = JSON.parse(localStorage.getItem('credentials'));
     if (credentials?.AccessToken && credentials?.TokenType) {

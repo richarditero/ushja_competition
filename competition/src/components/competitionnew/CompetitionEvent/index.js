@@ -24,7 +24,7 @@ import {
 } from "@material-ui/pickers";
 import "./CompetitionForm.css";
 import CloseIcon from "@material-ui/icons/Close";
-import withWidth from '@material-ui/core/withWidth';
+import withWidth from "@material-ui/core/withWidth";
 
 function isValidDate(d) {
   return d instanceof Date && !isNaN(d);
@@ -108,7 +108,12 @@ function CompetitionEvents(props) {
           return {
             ...value,
             isChecked: !value.isChecked,
-            quantity: value.quantity > 0 ? value.quantity : 0,
+            quantity:
+              value.quantity > 0
+                ? value.quantity
+                : competitionEvent.disableQuantityInput
+                ? 1
+                : 0,
           };
         }
         return value;
@@ -164,7 +169,19 @@ function CompetitionEvents(props) {
       let type = fileToLoad.name.split(".")[
         fileToLoad.name.split(".").length - 1
       ];
-      const extensions = ["pdf", "doc", "docx", "pdf", "xls", "xlsx", ".txt"];
+      const extensions = [
+        "pdf",
+        "doc",
+        "docx",
+        "xls",
+        "xlsx",
+        "txt",
+        "csv",
+        "dat",
+        "png",
+        "jpg",
+        "jpeg"
+      ];
 
       //Check select file
       if (type && extensions.includes(type)) {
@@ -183,7 +200,9 @@ function CompetitionEvents(props) {
         fileReader.readAsDataURL(fileToLoad);
       } else {
         return dispatch(
-          showFailureSnackbar(strings.displayText.uploadedFileIsnotInPdfFormat)
+          showFailureSnackbar(
+            `The upload file format should be any of the following formats ${extensions.join()}`
+          )
         );
       }
     }
@@ -239,11 +258,8 @@ function CompetitionEvents(props) {
       return dispatch(
         showFailureSnackbar(strings.displayText.enterTheCompetitionDate)
       );
-    }
-    else if (!isValidDate(formData.competitionDate)) {
-      return dispatch(
-        showFailureSnackbar('Enter valid competition date')
-      );
+    } else if (!isValidDate(formData.competitionDate)) {
+      return dispatch(showFailureSnackbar("Enter valid competition date"));
     }
 
     let checkoutData = {};
@@ -276,7 +292,7 @@ function CompetitionEvents(props) {
       <Grid container>
         {loader && <CircularProgress className="spinner-style" />}
         <Grid item xs={1} />
-        <Grid item xs={props.width === 'xs' ?12 : 10}>
+        <Grid item xs={props.width === "xs" ? 12 : 10}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Typography className={classes.headerText}>
@@ -314,7 +330,7 @@ function CompetitionEvents(props) {
             </Grid>
             <Grid item xs={12} md={6}>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-       {/*          <KeyboardDatePicker
+                {/*          <KeyboardDatePicker
                   margin="normal"
                   id="date-picker-dialog"
                   label="Date picker dialog"
@@ -328,7 +344,7 @@ function CompetitionEvents(props) {
                     "aria-label": "change date",
                   }}
                 /> */}
-            <KeyboardDatePicker
+                <KeyboardDatePicker
                   disableToolbar
                   animateYearScrolling
                   style={{ margin: 0 }}
@@ -350,9 +366,9 @@ function CompetitionEvents(props) {
                     // setInputValue(val);
                   }}
                   KeyboardButtonProps={{
-                    'aria-label': 'change date',
+                    "aria-label": "change date",
                   }}
-                />  
+                />
               </MuiPickersUtilsProvider>
               {/*           <TextField
                 label="Competition Date"
@@ -404,11 +420,11 @@ function CompetitionEvents(props) {
                                 }
                               />
                             </Grid>
-                            <Grid item xs={12}>
+                            {competitionEvent.description && <Grid item xs={12}>
                               <Typography style={{ paddingLeft: 30 }}>
                                 {competitionEvent.description}
                               </Typography>
-                            </Grid>
+                            </Grid>}
                             <Grid item xs={12}>
                               <FormControlLabel
                                 style={{ paddingLeft: 30 }}
@@ -437,15 +453,21 @@ function CompetitionEvents(props) {
                         >
                           <TextField
                             type="number"
-                            disabled={!competitionEvent.isChecked}
+                            disabled={
+                              !competitionEvent.isChecked ||
+                              competitionEvent.disableQuantityInput
+                            }
                             value={
                               competitionEvent.isChecked &&
                               competitionEvent.quantity
                             }
                             onChange={(e) => {
+                              console.log(e.target.value);
                               handleQunatityInputChange(
                                 competitionEvent,
-                                e.target.value
+                                competitionEvent.disableQuantityInput
+                                  ? 1
+                                  : e.target.value
                               );
                             }}
                           />
@@ -518,7 +540,7 @@ function CompetitionEvents(props) {
               >
                 Go Back
               </Button>
- 
+
               <Button
                 variant="contained"
                 color="primary"
@@ -540,7 +562,5 @@ CompetitionEvents.propTypes = {
   history: PropTypes.object,
   location: PropTypes.object,
 };
-
-
 
 export default withWidth()(CompetitionEvents);

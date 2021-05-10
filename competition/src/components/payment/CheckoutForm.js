@@ -8,7 +8,6 @@ import React, {
 
 import CreditCardInput from "./CardElement";
 import ReCAPTCHA from "react-google-recaptcha";
-import withWidth from "@material-ui/core/withWidth";
 
 import {
   TextField,
@@ -455,7 +454,7 @@ const CheckoutForm = forwardRef((props, ref) => {
   );
 });
 
-export default withWidth()(CheckoutForm);
+export default CheckoutForm;
 
 CheckoutForm.propTypes = {
   stripe: PropTypes.any,

@@ -425,7 +425,7 @@ function CompetitionEvents(props) {
                                 {competitionEvent.description}
                               </Typography>
                             </Grid>}
-                            <Grid item xs={12}>
+                          { !competitionEvent.disableQuantityInput && <Grid item xs={12}>
                               <FormControlLabel
                                 style={{ paddingLeft: 30 }}
                                 control={
@@ -442,7 +442,7 @@ function CompetitionEvents(props) {
                                   </Typography>
                                 }
                               />
-                            </Grid>
+                            </Grid>}
                           </Grid>
                         </Grid>
                         <Grid
